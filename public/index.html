@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" type="text/css" href="./styles/frontPage.css">
+</head>
+<body>
+    <div>
+        <div class="outter_div">
+            <div class ="login_div">
+                <h1>Login</h1>
+                <form action="/login" method= "POST">
+                    <div class="blanks">
+                            <label for="username">Username: </label>
+                            <input type="text" name="username" >
+                    </div>
+                    <div class="blanks">
+                            <label for="password">Password: </label>
+                            <input type="password" id="pass" name="password" required>
+                        </div>
+                            <input type="submit" value= "Login">
+                    
+                    		
+                </form>
+            </div>
+            <div class ="signUp_div">
+                <h1>Sign Up</h1>
+                <form action="/adduser" method= "POST">
+                    <div class="blanks">
+                        <label for="username">Username: </label>
+                        <input type="text" name="username" >
+                    </div>
+                    <div class="blanks">
+                        <label for="email">Email :     </label>
+                        <input type="text" name="email" >
+                    </div>
+                    <div class="blanks">
+                        <label for="password">Password: </label>
+                        <input type="password" id="pass" name="password" required>
+                    </div>
+                    <input type="submit" value= "Sign Up">
+                    
+                            
+                </form>
+            </div>
+        </div>
+    </div>
+</body>

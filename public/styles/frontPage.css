@@ -1,0 +1,99 @@
+body
+{
+	background-color:  #b7ff00;
+}
+.login_div
+{
+	text-align : center;
+	margin-top : 4%;
+	margin-left: 4%;
+	width: 30%;
+	float: left;
+	padding: 40px;
+	border-radius: 10px;
+	box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2), 0 10px 24px 0 rgba(0, 0, 0, 0.19);
+	background-color: #001a00;
+}
+.signUp_div
+{
+	text-align : center;
+	margin-top : 4%;
+	margin-right: 4%;
+	width: 30%;
+	float: right;
+	/* margin-right: 4%; */
+	padding: 40px;
+	border-radius: 10px;
+	box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2), 0 10px 24px 0 rgba(0, 0, 0, 0.19);
+	background-color: #001a00;
+}
+label
+{
+	color: white;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 1.5em;
+}
+.blanks
+{
+	color : white;
+}
+input:focus {
+    outline:none;
+}
+input, select {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 1.5em;
+	width: 65%;
+	padding: 20px 20px;
+	margin: 8px;
+
+	display: inline-block;
+	border: 2px solid #00b300;
+	border-radius: 10px;
+	box-sizing: border-box;
+	background-color: #ccff00;
+	text-align : left; 
+}
+input:hover
+{
+	background-color: #e1ff00;
+	border: 2px solid #008000;
+	border-radius: 10px;
+}
+input:focus 
+{
+	background-color: #e1ff00 !important;
+	border: 2px solid #008000;
+	border-radius: 10 px;
+}
+input:-webkit-autofill {		
+    -webkit-box-shadow: 0 0 0px 1000px #e1ff00 inset;
+}
+input[type=submit] 
+{
+	text-align : center;
+	font-size: 1.5em;
+	width: 55%;
+	background-color: #4CAF50;
+	color: white;
+	padding: 10px 10px;
+	margin: 18px 0;
+	border: 2px solid #00b300;
+	border-radius: 25px;
+	cursor: pointer;
+
+}
+input[type=submit]:hover {
+  background-color: #45a049;
+  border-radius: 25pxpx;
+}
+h1 {
+  display: block;
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+  margin-left: 0;
+  margin-right: 0;
+	font-weight: bold;
+	color: white;
+}
