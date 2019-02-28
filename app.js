@@ -13,7 +13,7 @@ app.locals.pretty = true;
 
 app.get('/', function(req, res){
    // res.send("Hello World!");
-   res.sendFile(path.join(__dirname + '/index.html'));
+   res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 app.post('/login', (req, res)=>{
    console.log(req.body.username);
