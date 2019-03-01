@@ -11,7 +11,7 @@ mongoose.connect(mongoDB, {useNewUrlParser:  true});
 mongoose.Promise = global.Promise;
 var db= mongoose.connection;
 
-db.on('error', console.error.bind(conlose,'MongoDB connection error'));
+db.on('error', console.error.bind(console,'MongoDB connection error'));
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
