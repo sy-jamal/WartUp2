@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify</title>
+    <link rel="stylesheet" type="text/css" href="../styles/frontPage.css">
+</head>
+<body>
+    <div>
+        <div class ="login_div">
+            <h3>Please verify the key sent over your email</h3>
+            <form action="/verify" method= "POST">
+                <div class="blanks">
+                        <label for="email">Email: </label>
+                        <input type="text" name="email" required>
+                </div>
+                <div class="blanks">
+                        <label for="key"> Key : </label>
+                        <input type="text"  name="key" required>
+                    </div>
+                        <input type="submit" value= "Verify">      
+                        
+            </form>
+        </div>
+    </div>
+</body>  

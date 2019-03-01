@@ -77,8 +77,14 @@ app.post('/adduser',(req, res)=>{
         console.log(error);
       } else {
         console.log('Email sent: ' + info.response);
+        res.sendFile(path.join(__dirname + '/public/html/verify.html'))
       }
     });
 
+});
+
+app.post('/verify', (req, res)=>{
+   console.log(req.body.email);
+   console.log(req.body.key);
 });
 app.listen(8080, '192.168.122.14');

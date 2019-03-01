@@ -97,3 +97,13 @@ h1 {
 	font-weight: bold;
 	color: white;
 }
+h3 {
+  display: block;
+  font-size: 1.3em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+  margin-left: 0;
+  margin-right: 0;
+	font-weight: bold;
+	color: white;
+}
