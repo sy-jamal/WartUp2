@@ -1,6 +1,7 @@
 var express = require('express');
 
 var app = express();
+const nodemailer = require('nodemailer');
 const path = require('path');
 const moment = require('moment');
 const bodyParser= require('body-parser');
@@ -18,6 +19,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.locals.pretty = true;
+
+var transporter = nodemailer.createTransport({
+   service: 'gmail',
+   auth: {
+     user: 'mycloud.verify@gmail.com',
+     pass: 'cloud356'
+   }
+ });
 
 let UserModel = require('./public/models/user')
 
@@ -40,14 +49,15 @@ app.post('/login', (req, res)=>{
    console.log(req.body.username);
 });
 app.post('/adduser',(req, res)=>{
+   let secKey= makeid();
    let newUser = new UserModel({
       username: req.body.username,
       password: req.body.password,
       email: req.body.email,
       varified: false,
-      key: 125325
-
+      key: secKey
    });
+
 
    newUser.save()
    .then(doc=>{
@@ -56,5 +66,19 @@ app.post('/adduser',(req, res)=>{
    .catch(err=>{
       console.error(err)
    })
+   let mailOptions = {
+      from: 'mycloud.verify@gmail.com',
+      to: req.body.email,
+      subject: 'verification Key',
+      text: secKey
+    };
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+
 });
 app.listen(8080, '192.168.122.14');
