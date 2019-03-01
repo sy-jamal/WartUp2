@@ -6,7 +6,7 @@ const moment = require('moment');
 const bodyParser= require('body-parser');
 var mongoose = require('mongoose');
 var mongoDB = 'mongodb://127.0.0.1/my_database';
-mongoose.connect(mongoDB, {useNewUrlParser});
+mongoose.connect(mongoDB, {useNewUrlParser:  true});
 
 mongoose.Promise = global.Promise;
 var db= mongoose.connection;
