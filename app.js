@@ -58,7 +58,7 @@ app.post('/adduser',(req, res)=>{
       username: req.body.username,
       password: req.body.password,
       email: req.body.email,
-      varified: false,
+      verified: false,
       key: secKey
    });
 
@@ -98,7 +98,7 @@ app.post('/verify', (req, res)=>{
          email:req.body.email, key:req.body.key
       },
       {
-          varified : true
+          verified : true
       },
       {
          new: true
