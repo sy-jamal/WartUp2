@@ -75,7 +75,15 @@ app.post('/adduser',(req, res)=>{
        transporter.sendMail(mailOptions, function(error, info){
          if (error) {
            console.log(error);
+           UserModel.findOneAndRemove({
+              email: req.body.email
+           })
+           .then(response =>{
            res.status(500).sendFile(path.join(__dirname + '/public/html/emailError.html'));
+            })
+            .catch(err =>{
+               console.log(err)
+            })
          } else {
            console.log('Email sent: ' + info.response);
            res.status(200).sendFile(path.join(__dirname + '/public/html/verify.html'));
