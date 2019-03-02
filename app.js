@@ -71,15 +71,16 @@ app.post('/adduser',(req, res)=>{
        transporter.sendMail(mailOptions, function(error, info){
          if (error) {
            console.log(error);
+           res.status(500).sendFile(path.join(__dirname + '/public/html/emailError.html'))
          } else {
            console.log('Email sent: ' + info.response);
-           res.sendFile(path.join(__dirname + '/public/html/verify.html'))
+           res.status(200).sendFile(path.join(__dirname + '/public/html/verify.html'))
          }
        });
    })
    .catch(err=>{
       console.error(err)
-      res.sendFile(path.join(__dirname + '/public/html/errorFile.html'))
+      res.status(500).sendFile(path.join(__dirname + '/public/html/errorFile.html'))
    })
    
 
