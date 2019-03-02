@@ -93,7 +93,7 @@ app.post('/adduser',(req, res)=>{
 app.post('/verify', (req, res)=>{
    console.log(req.body.email);
    console.log(req.body.key);
-   UserModel.findByIdAndUpdate(
+   UserModel.findOneAndUpdate(
       {
          email:req.body.email, key:req.body.key
       },
