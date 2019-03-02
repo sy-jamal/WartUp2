@@ -75,16 +75,16 @@ app.post('/adduser',(req, res)=>{
        transporter.sendMail(mailOptions, function(error, info){
          if (error) {
            console.log(error);
-           res.status(500).sendFile(path.join(__dirname + '/public/html/emailError.html'))
+           res.status(500).sendFile(path.join(__dirname + '/public/html/emailError.html'));
          } else {
            console.log('Email sent: ' + info.response);
-           res.status(200).sendFile(path.join(__dirname + '/public/html/verify.html'))
+           res.status(200).sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
        });
    })
    .catch(err=>{
-      console.error(err)
-      res.status(500).sendFile(path.join(__dirname + '/public/html/errorFile.html'))
+      console.error(err);
+      res.status(500).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
    })
    
 
@@ -97,10 +97,9 @@ app.post('/verify', (req, res)=>{
    {
       if(err)
       {
-         res.statusMessage("Error").sendFile(path.join(__dirname + '/public/html/verificationError.html'))
+         res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
       }
-      res.statusMessage("Ok")
-   }
-      );
+      res.status(200).send("ok");
+   });
 });
 app.listen(8080, '192.168.122.14');
