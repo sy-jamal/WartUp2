@@ -62,24 +62,26 @@ app.post('/adduser',(req, res)=>{
    newUser.save()
    .then(doc=>{
       console.log(doc)
+      let mailOptions = {
+         from: 'mycloud.verify@gmail.com',
+         to: req.body.email,
+         subject: 'verification Key',
+         text: secKey
+       };
+       transporter.sendMail(mailOptions, function(error, info){
+         if (error) {
+           console.log(error);
+         } else {
+           console.log('Email sent: ' + info.response);
+           res.sendFile(path.join(__dirname + '/public/html/verify.html'))
+         }
+       });
    })
    .catch(err=>{
       console.error(err)
+      res.sendFile(path.join(__dirname + '/public/html/errorFile.html'))
    })
-   let mailOptions = {
-      from: 'mycloud.verify@gmail.com',
-      to: req.body.email,
-      subject: 'verification Key',
-      text: secKey
-    };
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-        res.sendFile(path.join(__dirname + '/public/html/verify.html'))
-      }
-    });
+   
 
 });
 

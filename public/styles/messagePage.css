@@ -1,0 +1,58 @@
+body
+{
+  background-color:  #b7ff00;
+}
+.outter_div
+{
+  text-align: center;
+}
+.msg
+{
+	text-align : center;
+	margin-top : 4%;
+  margin-left: 10%;
+  margin-right: 4%;
+  width: 70%;
+  height: 50%;  
+	padding: 50px;
+	border-radius: 10px;
+	box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2), 0 10px 24px 0 rgba(0, 0, 0, 0.19);
+	background-color: #001a00;
+}
+h3 {
+    display: block;
+    font-size: 1.5em;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    margin-left: 0;
+    margin-right: 0;
+      font-weight: bold;
+      color: white;
+  }
+  h4 {
+    display: block;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    margin-left: 0;
+    margin-right: 0;
+      font-weight: bold;
+      color: white;
+  }
+  input[type=submit] 
+{
+	text-align : center;
+	font-size: 1.5em;
+	width: 75%;
+	background-color: #4CAF50;
+	color: white;
+	padding: 10px 10px;
+	margin: 18px 0;
+	border: 2px solid #00b300;
+	border-radius: 25px;
+	cursor: pointer;
+
+}
+input[type=submit]:hover {
+  background-color: #45a049;
+  border-radius: 25pxpx;
+}
