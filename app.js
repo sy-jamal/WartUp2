@@ -45,6 +45,10 @@ app.get('/', function(req, res){
    // res.send("Hello World!");
    res.sendFile(path.join(__dirname + '/public/index.html'));
 });
+app.get('/verification', function(req, res){
+   // res.send("Hello World!");
+   res.sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+});
 app.post('/login', (req, res)=>{
    console.log(req.body.username);
 });
@@ -89,5 +93,14 @@ app.post('/adduser',(req, res)=>{
 app.post('/verify', (req, res)=>{
    console.log(req.body.email);
    console.log(req.body.key);
+   UserModel.findByIdAndUpdate({email:req.body.email, key:req.body.key}, {$set:{varified:true}},{new: true}, (err, doc)=>
+   {
+      if(err)
+      {
+         res.statusMessage("Error").sendFile(path.join(__dirname + '/public/html/verificationError.html'))
+      }
+      res.statusMessage("Ok")
+   }
+      );
 });
 app.listen(8080, '192.168.122.14');
