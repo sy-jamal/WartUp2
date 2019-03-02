@@ -93,13 +93,25 @@ app.post('/adduser',(req, res)=>{
 app.post('/verify', (req, res)=>{
    console.log(req.body.email);
    console.log(req.body.key);
-   UserModel.findByIdAndUpdate({email:req.body.email, key:req.body.key}, {$set:{varified:true}},{upsert: true}, (err, doc)=>
-   {
-      if(err)
+   UserModel.findByIdAndUpdate(
       {
+         email:req.body.email, key:req.body.key
+      },
+      {
+          varified : true
+      },
+      {
+         new: true
+      })
+      .then(doc =>{
+         res.status(200).send("ok");
+      })
+      .catch(err =>{
+         console.error(err)
          res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
-      }
-      res.status(200).send("ok");
-   });
+
+      })
+       
+      
 });
 app.listen(8080, '192.168.122.14');
