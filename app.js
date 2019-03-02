@@ -47,7 +47,7 @@ app.get('/', function(req, res){
 });
 app.get('/verification', function(req, res){
    // res.send("Hello World!");
-   res.sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+   res.sendFile(path.join(__dirname + '/public/html/verify.html'));
 });
 app.post('/login', (req, res)=>{
    console.log(req.body.username);
