@@ -138,6 +138,13 @@ app.post('/verify', (req, res)=>{
 app.post('/login',(req,res)=>{
    console.log(req.body.username);
    console.log(req.body.password);
-   // UserModel.findOne({username: req.body.username})
+   UserModel.findOne({username: req.body.username})
+   .then(user=>{
+      if(!user){
+         res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+      }
+      res.send(200);
+
+   })
 });
 app.listen(8080, '192.168.122.14');
