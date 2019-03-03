@@ -101,27 +101,50 @@ app.post('/adduser',(req, res)=>{
 app.post('/verify', (req, res)=>{
    console.log(req.body.email);
    console.log(req.body.key);
-   UserModel.findOneAndUpdate(
-      {
-         $or:[
-            {email:req.body.email, key:req.body.key},
-            {email:req.body.email, key:"abracadabra"}
-         ]
-      },
-      {
-          verified : true
-      },
-      {
-         new: true
-      })
-      .then(doc =>{
-         res.status(200).send("ok");
-      })
-      .catch(err =>{
-         console.error(err)
-         res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+   if(req.body.key === "abracadabra")
+   {
+      UserModel.findOneAndUpdate(
+         {
+            email:req.body.email           
+         },
+         {
+             verified : true
+         },
+         {
+            new: true
+         })
+         .then(doc =>{
+            res.status(200).send("ok");
+         })
+         .catch(err =>{
+            console.error(err)
+            res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+   
+         })
 
-      })
+   }
+   else{
+      UserModel.findOneAndUpdate(
+         {
+            email:req.body.email, key:req.body.key
+           
+         },
+         {
+             verified : true
+         },
+         {
+            new: true
+         })
+         .then(doc =>{
+            res.status(200).send("ok");
+         })
+         .catch(err =>{
+            console.error(err)
+            res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+   
+         })
+   }
+   
        
       
 });
