@@ -145,7 +145,7 @@ app.post('/login',(req,res)=>{
       {
          if(req.body.password === user.password)
          {
-            res.status(200);
+            res.send(200);
          }
          else
          {
