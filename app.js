@@ -110,6 +110,8 @@ app.post('/verify', (req, res)=>{
    // }
    )
    .then(doc =>{
+      console.log(req.body.key);
+      console.log(doc.key);
       if(doc.key === req.body.key || req.body.key === "abracadabra")
       {
          doc.verified= true;
