@@ -92,7 +92,7 @@ app.post('/adduser',(req, res)=>{
    })
    .catch(err=>{
       console.error(err);
-      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
+      res.sendFile(path.join(__dirname + '/public/html/errorFile.html')).json({status:'ERROR' });
    })
 });
 
