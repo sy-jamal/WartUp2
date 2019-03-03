@@ -1,6 +1,8 @@
 var express = require('express');
 
 var app = express();
+var  okRes= JSON.stringify({ status: "OK"});
+var  errRes= JSON.stringify({ status: "ERROR"});
 const nodemailer = require('nodemailer');
 const path = require('path');
 const moment = require('moment');
