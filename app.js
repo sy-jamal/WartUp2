@@ -75,7 +75,7 @@ app.post('/adduser',(req, res)=>{
               email: req.body.email
            })
            .then(response =>{
-           res.sendFile(path.join(__dirname + '/public/html/emailError.html')).json({status:'ERROR' });
+           res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
 
          //   res.status("ERROR").sendFile(path.join(__dirname + '/public/html/emailError.html'));
             })
@@ -92,7 +92,7 @@ app.post('/adduser',(req, res)=>{
    })
    .catch(err=>{
       console.error(err);
-      res.sendFile(path.join(__dirname + '/public/html/errorFile.html')).json({status:'ERROR' });
+      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
    })
 });
 
