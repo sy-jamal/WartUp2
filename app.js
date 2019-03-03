@@ -137,10 +137,21 @@ app.post('/login',(req,res)=>{
    console.log(req.body.username)
    UserModel.findOne({username: req.body.username})
    .then(user=>{
+      console.log(user);
       if(!user){
          res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
       }
-      res.send(200);
+      else
+      {
+         if(req.body.password === user.password)
+         {
+            res.status(200);
+         }
+         else
+         {
+            res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+         }
+      }
    })
    .catch(err =>{
       console.error(err)
