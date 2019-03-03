@@ -40,7 +40,6 @@ function makeid() {
    return text;
  }
 
-
 app.get('/', function(req, res){
    // res.send("Hello World!");
    res.sendFile(path.join(__dirname + '/public/index.html'));
@@ -61,7 +60,6 @@ app.post('/adduser',(req, res)=>{
       verified: false,
       key: secKey
    });
-
 
    newUser.save()
    .then(doc=>{
@@ -94,68 +92,48 @@ app.post('/adduser',(req, res)=>{
       console.error(err);
       res.status(500).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
    })
-   
-
 });
 
 app.post('/verify', (req, res)=>{
    console.log(req.body.email);
    console.log(req.body.key);
-   if(req.body.key === "abracadabra")
+   
+   UserModel.findOne(
    {
-      UserModel.findOneAndUpdate(
-         {
-            email:req.body.email           
-         },
-         {
-             verified : true
-         },
-         {
-            new: true
-         })
-         .then(doc =>{
-            res.status(200).send("ok");
-         })
-         .catch(err =>{
-            console.error(err)
-            res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
-   
-         })
+      email:req.body.email           
+   }
+   // {
+   //     verified : true
+   // },
+   // {
+   //    new: true
+   // }
+   )
+   .then(doc =>{
+      if(doc.key === req.body.key || req.body.key === "abracadabra")
+      {
+         doc.verified= true;
+         doc.save()
+         .then(newDoc=>{                     
+               res.status(200).send("ok");
+         }) 
+         res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
 
-   }
-   else{
-      UserModel.findOneAndUpdate(
-         {
-            email:req.body.email, key:req.body.key
-           
-         },
-         {
-             verified : true
-         },
-         {
-            new: true
-         },
-         function(err, doc)
-         {
-            if(err){
-               console.error(err)
-               res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
-   
-            }
-            res.status(200).send("ok");
-         }         
-      )
-         // .then(doc =>{
-         //    res.status(200).send("ok");
-         // })
-         // .catch(err =>{
-         //    console.error(err)
-         //    res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
-   
-         // })
-   }
-   
-       
-      
+      }
+      else
+      {
+         res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+      }
+   })
+   .catch(err =>{
+      console.error(err)
+      res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+   })      
+});
+
+app.post('/login',(req,res)=>{
+   console.log(req.body.username);
+   console.log(req.body.password);
+   // UserModel.findOne({username: req.body.username})
 });
 app.listen(8080, '192.168.122.14');
