@@ -82,7 +82,7 @@ app.post('/adduser',(req, res)=>{
             })
          } else {
            console.log('Email sent: ' + info.response);
-           res.status(200).sendFile(path.join(__dirname + '/public/html/verify.html'));
+           res.send(200).sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
        });
    })
@@ -143,6 +143,10 @@ app.post('/login',(req,res)=>{
       }
       else
       {
+         if(!user.verified)
+         {
+           res.send(500).sendFile(path.join(__dirname + '/public/html/verify.html'));
+         }
          if(req.body.password === user.password)
          {
             res.send(200);
