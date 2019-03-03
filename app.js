@@ -141,7 +141,10 @@ app.post('/login',(req,res)=>{
          res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
       }
       res.send(200);
-
    })
+   .catch(err =>{
+      console.error(err)
+      res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+   }) 
 });
 app.listen(8080, '192.168.122.14');
