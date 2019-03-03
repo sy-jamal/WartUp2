@@ -48,9 +48,7 @@ app.get('/verification', function(req, res){
    // res.send("Hello World!");
    res.sendFile(path.join(__dirname + '/public/html/verify.html'));
 });
-app.post('/login', (req, res)=>{
-   console.log(req.body.username);
-});
+
 app.post('/adduser',(req, res)=>{
    let secKey= makeid();
    let newUser = new UserModel({
