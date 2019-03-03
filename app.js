@@ -134,15 +134,25 @@ app.post('/verify', (req, res)=>{
          },
          {
             new: true
-         })
-         .then(doc =>{
-            res.status(200).send("ok");
-         })
-         .catch(err =>{
-            console.error(err)
-            res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+         },
+         function(err, doc)
+         {
+            if(err){
+               console.error(err)
+               res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
    
-         })
+            }
+            res.status(200).send("ok");
+         }         
+      )
+         // .then(doc =>{
+         //    res.status(200).send("ok");
+         // })
+         // .catch(err =>{
+         //    console.error(err)
+         //    res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+   
+         // })
    }
    
        
