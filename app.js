@@ -75,7 +75,7 @@ app.post('/adduser',(req, res)=>{
               email: req.body.email
            })
            .then(response =>{
-           res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
+           res.sendFile(path.join(__dirname + '/public/html/emailError.html')).json({status:'ERROR' });
 
          //   res.status("ERROR").sendFile(path.join(__dirname + '/public/html/emailError.html'));
             })
