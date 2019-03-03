@@ -119,8 +119,10 @@ app.post('/verify', (req, res)=>{
          .then(newDoc=>{                     
                res.status(200).send("ok");
          }) 
-         res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
-
+         .catch(err =>
+         {
+            res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+         })
       }
       else
       {
