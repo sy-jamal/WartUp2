@@ -75,20 +75,24 @@ app.post('/adduser',(req, res)=>{
               email: req.body.email
            })
            .then(response =>{
-           res.status(500).sendFile(path.join(__dirname + '/public/html/emailError.html'));
+           res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
+
+         //   res.status("ERROR").sendFile(path.join(__dirname + '/public/html/emailError.html'));
             })
             .catch(err =>{
                console.log(err)
+               // res.status("ERROR").send("something wrong");
+               res.json({status:'ERROR'}).send("something went wrong while sending email")
             })
          } else {
            console.log('Email sent: ' + info.response);
-           res.send(200).sendFile(path.join(__dirname + '/public/html/verify.html'));
+           res.json({status:'OK' }).sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
        });
    })
    .catch(err=>{
       console.error(err);
-      res.status(500).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
+      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
    })
 });
 
@@ -115,21 +119,21 @@ app.post('/verify', (req, res)=>{
          doc.verified= true;
          doc.save()
          .then(newDoc=>{                     
-               res.status(200).send("ok");
+               res.json({status:'OK' }).send("Verified");
          }) 
          .catch(err =>
          {
-            res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+            res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
          })
       }
       else
       {
-         res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+         res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
       }
    })
    .catch(err =>{
       console.error(err)
-      res.status(500).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
    })      
 });
 
@@ -139,27 +143,27 @@ app.post('/login',(req,res)=>{
    .then(user=>{
       console.log(user);
       if(!user){
-         res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+         res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
       }
       else
       {
          if(!user.verified)
          {
-           res.send(500).sendFile(path.join(__dirname + '/public/html/verify.html'));
+           res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
          if(req.body.password === user.password)
          {
-            res.send(200);
+            res.json({status:'OK' }).send("user Logged in");
          }
          else
          {
-            res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+            res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
          }
       }
    })
    .catch(err =>{
       console.error(err)
-      res.status(500).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
    }) 
 });
 app.listen(8080, '192.168.122.14');
