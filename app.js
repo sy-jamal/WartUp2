@@ -193,9 +193,10 @@ app.post('/ttt/play', (req, res) => {
    {
       console.log("resetting board");
       req.session.board= board;   //setting the session grid to be an empty grid
+      console.log(req.session.board);
    }
    console.log("sending from end");
-	return res.send({grid: req.session.board, winner:w});
+	return res.send({grid: g, winner:w});
 });
 
 
