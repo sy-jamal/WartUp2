@@ -155,7 +155,7 @@ app.post('/ttt/play', (req, res) => {
    }
    if(!req.body.move || req.body.move === null ||req.body.move === "null" ||  req.body.move === ""  )  //Making a request with { move:null } should return the current grid without making a move.
    {
-      console.log("inside null checking")
+      console.log("inside null checking");
       res.send({grid: req.session.board, winner: ""});
    }
    console.log(req.body.move);
