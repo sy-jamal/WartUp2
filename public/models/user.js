@@ -7,7 +7,11 @@ let UserSchema = new Schema({
     password: {type: String, required :true, max: 100},
     email: {type: String, required :true, max: 100, unique: true},
     verified: {type: Boolean, required :true, max: 100},
-    key: {type: String, required :true, max: 100}
+    key: {type: String, required :true, max: 100},
+    human: {type: Number, default: 0, required: true},
+    worp: {type: Number, default: 0, required: true},
+    tie: {type: Number, default: 0, required: true},
+    gameList: {type: Schema.ObjectId, ref: 'Game'}
 });
 UserSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('User', UserSchema);
