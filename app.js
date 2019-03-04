@@ -147,7 +147,7 @@ function makeMove(grid) {
 	}
 }
 
-app.get('/listgames',(req,res)=>{
+app.post('/listgames',(req,res)=>{
    if(!req.session.user)
    {
       return res.send({status:"ERROR", message: 'Not in session'});
@@ -189,7 +189,7 @@ app.post('/getgame',(req,res)=>{
 
 });
 
-app.get('/getscore',(req,res)=>{
+app.post('/getscore',(req,res)=>{
    if(!req.session.user)
    {
       return res.send({status:"ERROR", message: 'Not in session /getgame'});
@@ -307,6 +307,10 @@ app.get('/', function(req, res){
    return res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 app.get('/ttt/', (req, res) => {
+	console.log('GET TTT')
+	return res.sendFile(path.join(__dirname + '/public/index.html'));
+});
+app.post('/ttt/', (req, res) => {
 	console.log('GET TTT')
 	return res.sendFile(path.join(__dirname + '/public/index.html'));
 });
