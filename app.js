@@ -292,10 +292,10 @@ app.post('/ttt/play', (req, res) => {
    console.log("sending from end");
    if(w!="")
    {
-      return res.send({grid: g, winner:w});      
+      return res.send({status: "OK", grid: g, winner:w});      
    }
    else{
-      return res.send({grid: g}); 
+      return res.send({status: "OK", grid: g}); 
    }
 	
 });
