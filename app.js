@@ -271,8 +271,8 @@ app.post('/ttt/play', (req, res) => {
                   {
                      doc.tie= doc.tie+1;
                   }
-                  console.log(req.session.board)
-                  doc.gameList.push({grid: req.session.board, winner: w});
+                  console.log(g)
+                  doc.gameList.push({grid: g, winner: w});
                   console.log(doc.gameList);
                   doc.save()
                   .then(msg=>{
