@@ -255,37 +255,35 @@ app.post('/ttt/play', (req, res) => {
    if(w != "") //either there has been a tie or a winner
    {
       var game_finalize= {grid: req.session.board, winner: w};
-      UserModel.findOne({ email: req.session.user.email }, function(err, doc) {
-         if(err)
-         {
-            return res.send({status: "ERROR", message:'Trouble finding in database'});
-         }
-         else
-         {
-            doc.totalGames= doc.totalGames+1;
-            if(w ==='X')
-            {
-               doc.human= doc.human+1;
-            }
-            else if(w==='O')
-            {
-               doc.wopr=doc.wopr+1;
-            }
-            else
-            {
-               doc.tie= doc.tie+1;
-            }
-            doc.gameList.push(game_finalize);
-            doc.save()
-            .then(msg=>{
-               console.log('store game to database');
-            })
-            .catch(err=>{
-               return res.send({status: "Error", message:'Could not save game after winner is found' });
-            })
-         }
-      });
-
+      UserModel.findOne({ email: req.session.user.email })
+               .then(doc=>{
+                  console.log("writing game update to db");
+                  doc.totalGames= doc.totalGames+1;
+                  if(w ==='X')
+                  {
+                     doc.human= doc.human+1;
+                  }
+                  else if(w==='O')
+                  {
+                     doc.wopr=doc.wopr+1;
+                  }
+                  else
+                  {
+                     doc.tie= doc.tie+1;
+                  }
+                  doc.gameList.push(game_finalize);
+                  doc.save()
+                  .then(msg=>{
+                     console.log('store game to database');
+                  })
+                  .catch(err=>{
+                     return res.send({status: "Error", message:'Could not save game after winner is found' });
+                  })
+               })
+               .catch(err=>{
+                  return res.send({status: "ERROR", message:'Trouble finding in database'});
+               })
+         
       console.log("resetting board");
       req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
       console.log(req.session.board);
