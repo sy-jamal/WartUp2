@@ -5,7 +5,7 @@ var uniqueValidator = require('mongoose-unique-validator');
 let GameSchema = new Schema({
     start_date: {type: Date,  default: Date.now},
     grid: [Number],
-    winner:{type: String, required :true, max: 3}
+    winner:{type: String, required :true}
 });
 
 let UserSchema = new Schema({
@@ -14,9 +14,9 @@ let UserSchema = new Schema({
     email: {type: String, required :true, max: 100, unique: true},
     verified: {type: Boolean, required :true, max: 100},
     key: {type: String, required :true, max: 100},
-    totalGame:{type: Number, default: 0, required: true},
+    totalGames:{type: Number, default: 0, required: true},
     human: {type: Number, default: 0, required: true},
-    worp: {type: Number, default: 0, required: true},
+    wopr: {type: Number, default: 0, required: true},
     tie: {type: Number, default: 0, required: true},
     gameList: [GameSchema]
 });

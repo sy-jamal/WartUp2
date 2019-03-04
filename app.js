@@ -147,11 +147,74 @@ function makeMove(grid) {
 	}
 }
 
+app.get('/listgames',(req,res)=>{
+   if(!req.session.user)
+   {
+      return res.send({status:"ERROR", message: 'Not in session'});
+   }
+   UserModel.findOne({ email: req.session.user.email })
+            .then(user=>{
+               var allGames=[]
+               var lst = user.gameList;
+               for(let i =0; i< lst.length; i++)
+               {
+                  var jsonStr= {id: i, start_date: lst[i].start_date};
+                  allGames.push(jsonStr);
+               }
+               return res.send({status:"OK",games: allGames});
+
+            })
+            .catch(err=>{
+               console.log(err);
+               return res.send({status:"ERROR", message: 'Difficulties with finding game list in db'});
+            })
+});
+
+app.post('/getgame',(req,res)=>{
+   if(!req.session.user)
+   {
+      return res.send({status:"ERROR", message: 'Not in session /getgame'});
+   }
+   UserModel.findOne({ email: req.session.user.email })
+            .then(user=>{
+               var grd= user.gameList[req.body.id].grid;
+               var win= user.gameList[req.body.id].winner;
+               return res.send({status: "OK", grid: grd, winner:win});
+
+            })
+            .catch(err=>{
+               console.log(err);
+               return res.send({status:"ERROR", message: 'Difficulties with finding game list in db'});
+            }) 
+
+});
+
+app.post('/getscore',(req,res)=>{
+   if(!req.session.user)
+   {
+      return res.send({status:"ERROR", message: 'Not in session /getgame'});
+   }
+   UserModel.findOne({ email: req.session.user.email })
+            .then(user=>{
+               var h = user.human;
+               var c= user.wopr;
+               var t= user.tie;
+
+               return res.send({status: "OK", human: h, wopr: c, tie: t});
+
+            })
+            .catch(err=>{
+               console.log(err);
+               return res.send({status:"ERROR", message: 'Difficulties with finding game list in db'});
+            }) 
+
+});
+
 app.post('/ttt/play', (req, res) => {
    console.log('/TTT/PLAY');
    if(!req.session.board)
    {
-      return res.send({status:'Error', message: 'Not in session'});
+      return res.send({status:"ERROR", message: 'Not in session'});
    }
    if( req.body.move == null ||  req.body.move === "" || req.body.move == "null" )  //Making a request with { move:null } should return the current grid without making a move.
    {
@@ -174,7 +237,7 @@ app.post('/ttt/play', (req, res) => {
 
    }
    else{
-      return res.send({status: 'Error', message: 'User Clicking an Occupied space on grid'});
+      return res.send({status: "ERROR", message: 'User Clicking an Occupied space on grid'});
    }
    
 	let w = checkWinner(g);
@@ -191,6 +254,38 @@ app.post('/ttt/play', (req, res) => {
    }
    if(w != "") //either there has been a tie or a winner
    {
+      var game_finalize= {grid: req.session.board, winner: w};
+      UserModel.findOne({ email: req.session.user.email }, function(err, doc) {
+         if(err)
+         {
+            return res.send({status: "ERROR", message:'Trouble finding in database'});
+         }
+         else
+         {
+            doc.totalGames= doc.totalGames+1;
+            if(w ==='X')
+            {
+               doc.human= human+1;
+            }
+            else if(w==='O')
+            {
+               doc.wopr=doc.wopr+1;
+            }
+            else
+            {
+               doc.tie= doc.tie+1;
+            }
+            doc.gameList.push(game_finalize);
+            doc.save()
+            .then(msg=>{
+               console.log('store game to database');
+            })
+            .catch(err=>{
+               return res.send({status: "Error", message:'Could not save game after winner is found' });
+            })
+         }
+      });
+
       console.log("resetting board");
       req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
       console.log(req.session.board);
@@ -202,7 +297,11 @@ app.post('/ttt/play', (req, res) => {
 
 app.get('/', function(req, res){
    // res.send("Hello World!");
-   res.sendFile(path.join(__dirname + '/public/index.html'));
+   return res.sendFile(path.join(__dirname + '/public/index.html'));
+});
+app.get('/ttt/', (req, res) => {
+	console.log('GET TTT')
+	return res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 app.get('/verification', function(req, res){
    // res.send("Hello World!");
@@ -212,8 +311,8 @@ app.get('/logout', function(req, res) {
    // if(req.session)
    // {
       req.session.reset();   
-      res.json({status:'OK', message: "logged out perfectly" });
-      res.redirect('/');
+      return res.json({status:"OK", message: "logged out perfectly" });
+      // res.redirect('/');
    // }
    // res.json({status:'ERROR', message: "user didn't logged in(session was not found)" })
    
@@ -221,12 +320,12 @@ app.get('/logout', function(req, res) {
  app.post('/logout', function(req, res) {
   
       req.session.reset();   
-      res.json({status:'OK', message: "logged out perfectly" });
+      res.json({status:"OK", message: "logged out perfectly" });
       res.redirect('/');
    
  });
 app.get('/dashboard', requireLogin, function(req, res) {
-   res.json({status:'OK' , message: "logged in" });
+   res.json({status:"OK" , message: "logged in" });
  });
 
 app.post('/adduser',(req, res)=>{
@@ -255,24 +354,27 @@ app.post('/adduser',(req, res)=>{
               email: req.body.email
            })
            .then(response =>{
-           res.json({status:'ERROR', message: "wrong email address" }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
+           res.json({status:"ERROR", message: "wrong email address" }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
 
          //   res.status("ERROR").sendFile(path.join(__dirname + '/public/html/emailError.html'));
             })
             .catch(err =>{
                console.log(err)
                // res.status("ERROR").send("something wrong");
-               res.json({status:'ERROR', message: "something went wrong while sending email"}).send("something went wrong while sending email")
+               return res.json({status:"ERROR", message: "something went wrong while sending email"});
+               // .send("something went wrong while sending email")
             })
          } else {
            console.log('Email sent: ' + info.response);
-           res.json({status:'OK', message: "key has been sent to Email" }).sendFile(path.join(__dirname + '/public/html/verify.html'));
+           return res.json({status:"OK", message: "key has been sent to Email" });
+         //   .sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
        });
    })
    .catch(err=>{
       console.error(err);
-      res.json({status:'ERROR', message: "Email/username already exists in database" }).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
+      return res.json({status:"ERROR", message: "Email/username already exists in database" });
+      // .sendFile(path.join(__dirname + '/public/html/errorFile.html'));
    })
 });
 
@@ -299,21 +401,25 @@ app.post('/verify', (req, res)=>{
          doc.verified= true;
          doc.save()
          .then(newDoc=>{                     
-               res.json({status:'OK', message: "user information verified with key" }).send("Verified");
+               return res.json({status:"OK", message: "user information verified with key" });
+               // .send("Verified");
          }) 
          .catch(err =>
          {
-            res.json({status:'ERROR', message: "Verification error(saving in database error)" }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+            return res.json({status:"ERROR", message: "Verification error(saving in database error)" });
+            // .sendFile(path.join(__dirname + '/public/html/verificationError.html'));
          })
       }
       else
       {
-         res.json({status:'ERROR', message: "verification error" }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+         return res.json({status:"ERROR", message: "verification error" });
+         // .sendFile(path.join(__dirname + '/public/html/verificationError.html'));
       }
    })
    .catch(err =>{
       console.error(err)
-      res.json({status:'ERROR', message: "verification error (Email is not in database)" }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+      return res.json({status:"ERROR", message: "verification error (Email is not in database)" });
+      // .sendFile(path.join(__dirname + '/public/html/verificationError.html'));
    })      
 });
 
@@ -323,29 +429,34 @@ app.post('/login',(req,res)=>{
    .then(user=>{
       console.log(user);
       if(!user){
-         res.json({status:'ERROR', message: "Not a user while loging in" }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+         return res.json({status:"ERROR", message: "Not a user while loging in" });
+         // .sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
       }
       else
       {
          if(!user.verified)
          {
-           res.json({status:'ERROR', message: "Account exist in database but not verified" }).sendFile(path.join(__dirname + '/public/html/verify.html'));
+           return res.json({status:"ERROR", message: "Account exist in database but not verified" });
+         //   .sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
          if(req.body.password === user.password)
          {
             req.session.user = user;
             req.session.board= board;
-            res.json({status:'OK', message: "Logged in using correct password and session created" }).send("user Logged in");
+            return res.json({status:"OK", message: "Logged in using correct password and session created" });
+            // .send("user Logged in");
          }
          else
          {
-            res.json({status:'ERROR', message: "Tried to login in using WRONG password" }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+            return res.json({status:'ERROR', message: "Tried to login in using WRONG password" })
+            // .sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
          }
       }
    })
    .catch(err =>{
       console.error(err)
-      res.json({status:'ERROR', message: "Error while accessing the User info from Database" }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+      return res.json({status:"ERROR", message: "Error while accessing the User info from Database" });
+      // .sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
    }) 
 });
 app.listen(8080, '192.168.122.14');
