@@ -142,7 +142,6 @@ function makeMove(grid) {
 	for (let x = 0; x < 9; x++) {
 		if (grid[x] == " ") {
          grid[x] = "O";
-         req.session.board= grid;
 			return grid;
 		}
 	}
@@ -150,6 +149,10 @@ function makeMove(grid) {
 
 app.post('/ttt/play', (req, res) => {
    console.log('/TTT/PLAY');
+   if(!req.session.board)
+   {
+      res.json({status:'Error', message: 'Not in session'});
+   }
    if(!req.body.move || req.body.move === null ||req.body.move === "null" ||  req.body.move === ""  )  //Making a request with { move:null } should return the current grid without making a move.
    {
       res.json({grid: req.session.board, winner: ""});
@@ -183,7 +186,7 @@ app.post('/ttt/play', (req, res) => {
    }
    if(w != "") //either there has been a tie or a winner
    {
-      console.log("resettin board");
+      console.log("resetting board");
       req.session.board= board;   //setting the session grid to be an empty grid
    }
 
