@@ -1,5 +1,5 @@
 var express = require('express');
-
+var session = require('client-sessions');
 var app = express();
 var  okRes= JSON.stringify({ status: "OK"});
 var  errRes= JSON.stringify({ status: "ERROR"});
@@ -19,6 +19,31 @@ db.on('error', console.error.bind(console,'MongoDB connection error'));
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(session({
+   cookieName: 'session',
+   secret: 'random_string_goes_here',
+   duration: 30 * 60 * 1000,  
+   activeDuration: 5 * 60 * 1000,
+   httpOnly: true,
+   secure: true,
+   ephemeral: true  
+ }));
+ app.use(function(req, res, next) {
+   if (req.session && req.session.user) {
+     User.findOne({ email: req.session.user.email }, function(err, user) {
+       if (user) {
+         req.user = user;
+         delete req.user.password; // delete the password from the session
+         req.session.user = user;  //refresh the session value
+         res.locals.user = user;
+       }
+       // finishing processing the middleware and run the route
+       next();
+     });
+   } else {
+     next();
+   }
+ });
 
 app.locals.pretty = true;
 
@@ -41,7 +66,13 @@ function makeid() {
  
    return text;
  }
-
+ function requireLogin (req, res, next) {
+   if (!req.user) {
+     res.redirect('/login');
+   } else {
+     next();
+   }
+ };
 app.get('/', function(req, res){
    // res.send("Hello World!");
    res.sendFile(path.join(__dirname + '/public/index.html'));
@@ -50,6 +81,19 @@ app.get('/verification', function(req, res){
    // res.send("Hello World!");
    res.sendFile(path.join(__dirname + '/public/html/verify.html'));
 });
+app.get('/logout', function(req, res) {
+   if(req.session)
+   {
+      req.session.reset();   
+      res.json({status:'OK' });
+      res.redirect('/');
+   }
+   res.json({status:'ERROR' })
+   
+ });
+app.get('/dashboard', requireLogin, function(req, res) {
+   res.json({status:'OK' });
+ });
 
 app.post('/adduser',(req, res)=>{
    let secKey= makeid();
@@ -155,6 +199,7 @@ app.post('/login',(req,res)=>{
          }
          if(req.body.password === user.password)
          {
+            req.session.user = user;
             res.json({status:'OK' }).send("user Logged in");
          }
          else
