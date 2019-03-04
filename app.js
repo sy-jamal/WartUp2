@@ -189,7 +189,7 @@ app.post('/getgame',(req,res)=>{
 
 });
 
-app.post('/getscore',(req,res)=>{
+app.get('/getscore',(req,res)=>{
    if(!req.session.user)
    {
       return res.send({status:"ERROR", message: 'Not in session /getgame'});
@@ -291,7 +291,14 @@ app.post('/ttt/play', (req, res) => {
       console.log(req.session.board);
    }
    console.log("sending from end");
-	return res.send({grid: g, winner:w});
+   if(w==="")
+   {
+      return res.send({grid: g});
+   }
+   else{
+      return res.send({grid: g, winner:w});
+   }
+	
 });
 
 
