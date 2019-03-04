@@ -4,7 +4,7 @@ var uniqueValidator = require('mongoose-unique-validator');
 
 let GameSchema = new Schema({
     start_date: {type: Date,  default: Date.now},
-    grid: [Number],
+    grid: [String],
     winner:{type: String, required :true}
 });
 
