@@ -141,7 +141,8 @@ function checkWinner(grid) {
 function makeMove(grid) {
 	for (let x = 0; x < 9; x++) {
 		if (grid[x] == " ") {
-			grid[x] = "O";
+         grid[x] = "O";
+         req.session.board= grid;
 			return grid;
 		}
 	}
@@ -161,8 +162,10 @@ app.post('/ttt/play', (req, res) => {
    let g = req.session.board;
 
    if(g[move]===" ")
-   {
+   {      
       g[move]="X";
+      req.session.board= g;
+
    }
    else{
       res.json({status: 'Error', message: 'User Clicking an Occupied space on grid'});
@@ -180,6 +183,7 @@ app.post('/ttt/play', (req, res) => {
    }
    if(w != "") //either there has been a tie or a winner
    {
+      console.log("resettin board");
       req.session.board= board;   //setting the session grid to be an empty grid
    }
 
