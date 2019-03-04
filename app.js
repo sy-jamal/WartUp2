@@ -153,7 +153,7 @@ app.post('/ttt/play', (req, res) => {
    {
       res.json({grid: req.session.board, winner: ""});
    }
-   
+   console.log(req.body.move);
 
    // let move=parseInt(req.body.move);
     let move=req.body.move;
