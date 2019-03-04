@@ -23,14 +23,28 @@ app.use(session({
    cookieName: 'session',
    secret: 'random_string_goes_here',
    duration: 30 * 60 * 1000,  
-   activeDuration: 5 * 60 * 1000,
-   httpOnly: true,
-   secure: true,
-   ephemeral: true  
+   activeDuration: 5 * 60 * 1000
+   // httpOnly: true,
+   // secure: true,
+   // ephemeral: true  
  }));
- app.use(function(req, res, next) {
+
+
+app.locals.pretty = true;
+
+var transporter = nodemailer.createTransport({
+   service: 'gmail',
+   auth: {
+     user: 'mycloud.verify@gmail.com',
+     pass: 'cloud356'
+   }
+ });
+
+let UserModel = require('./public/models/user');
+
+app.use(function(req, res, next) {
    if (req.session && req.session.user) {
-     User.findOne({ email: req.session.user.email }, function(err, user) {
+     UserModel.findOne({ email: req.session.user.email }, function(err, user) {
        if (user) {
          req.user = user;
          delete req.user.password; // delete the password from the session
@@ -44,18 +58,6 @@ app.use(session({
      next();
    }
  });
-
-app.locals.pretty = true;
-
-var transporter = nodemailer.createTransport({
-   service: 'gmail',
-   auth: {
-     user: 'mycloud.verify@gmail.com',
-     pass: 'cloud356'
-   }
- });
-
-let UserModel = require('./public/models/user')
 
 function makeid() {
    var text = "";
