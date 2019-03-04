@@ -155,7 +155,9 @@ app.post('/ttt/play', (req, res) => {
    }
    
 
-   let move=parseInt(req.body.move);
+   // let move=parseInt(req.body.move);
+    let move=req.body.move;
+
    let g = req.session.board;
 
    if(g[move]===" ")
