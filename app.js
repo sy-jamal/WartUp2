@@ -84,13 +84,13 @@ app.get('/verification', function(req, res){
    res.sendFile(path.join(__dirname + '/public/html/verify.html'));
 });
 app.get('/logout', function(req, res) {
-   if(req.session)
-   {
+   // if(req.session)
+   // {
       req.session.reset();   
       res.json({status:'OK', message: "logged out perfectly" });
       res.redirect('/');
-   }
-   res.json({status:'ERROR', message: "user didn't logged in(session was not found)" })
+   // }
+   // res.json({status:'ERROR', message: "user didn't logged in(session was not found)" })
    
  });
 app.get('/dashboard', requireLogin, function(req, res) {
