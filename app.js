@@ -272,6 +272,7 @@ app.post('/ttt/play', (req, res) => {
                      doc.tie= doc.tie+1;
                   }
                   doc.gameList.push(game_finalize);
+                  console.log(doc.gameList);
                   doc.save()
                   .then(msg=>{
                      console.log('store game to database');
