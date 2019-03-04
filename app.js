@@ -151,12 +151,12 @@ app.post('/ttt/play', (req, res) => {
    console.log('/TTT/PLAY');
    if(!req.session.board)
    {
-      res.send({status:'Error', message: 'Not in session'});
+      return res.send({status:'Error', message: 'Not in session'});
    }
    if(!req.body.move || req.body.move === null ||req.body.move === "null" ||  req.body.move === ""  )  //Making a request with { move:null } should return the current grid without making a move.
    {
       console.log("inside null checking");
-      res.send({grid: req.session.board, winner: ""});
+      return res.send({grid: req.session.board, winner: ""});
    }
    console.log(req.body.move);
 
@@ -174,7 +174,7 @@ app.post('/ttt/play', (req, res) => {
 
    }
    else{
-      res.send({status: 'Error', message: 'User Clicking an Occupied space on grid'});
+      return res.send({status: 'Error', message: 'User Clicking an Occupied space on grid'});
    }
    
 	let w = checkWinner(g);
@@ -195,7 +195,7 @@ app.post('/ttt/play', (req, res) => {
       req.session.board= board;   //setting the session grid to be an empty grid
    }
    console.log("sending from end");
-	res.send({grid: req.body.grid, winner:w});
+	return res.send({grid: req.body.grid, winner:w});
 });
 
 
