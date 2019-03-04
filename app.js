@@ -254,22 +254,18 @@ app.post('/ttt/play', (req, res) => {
    }
    if(w != "") //either there has been a tie or a winner
    {
-      // var game_finalize= {grid: req.session.board, winner: w};
       UserModel.findOne({ email: req.session.user.email })
          .then(doc=>{
             console.log("writing game update to db");
             doc.totalGames= doc.totalGames+1;
-            if(w ==='X')
-            {
+            if(w ==='X'){
                doc.human++;
             }
-            else if(w==='O')
-            {
+            else if(w==='O'){
                doc.wopr++;
             }
-            else
-            {
-               doc.tie++;
+            else{ 
+               doc.tie++; 
             }
             console.log(g)
             doc.gameList.push({grid: g, winner: w});
@@ -292,13 +288,11 @@ app.post('/ttt/play', (req, res) => {
             console.log(err);
             return res.send({status: "ERROR", message:'Trouble finding in database'});
          })
-         
-      
    }
-   console.log("sending from end");   
-   return res.send({status: "OK", grid: g}); 
-  
-	
+   else{
+      console.log("sending from end");   
+      return res.send({status: "OK", grid: g}); 
+   }	
 });
 
 
