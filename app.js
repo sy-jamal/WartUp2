@@ -1,14 +1,15 @@
 var express = require('express');
 var session = require('client-sessions');
 var app = express();
-var  okRes= JSON.stringify({ status: "OK"});
-var  errRes= JSON.stringify({ status: "ERROR"});
+
 const nodemailer = require('nodemailer');
 const path = require('path');
 const moment = require('moment');
 const bodyParser= require('body-parser');
 var mongoose = require('mongoose');
 var mongoDB = 'mongodb://127.0.0.1/my_database';
+
+var board= [" "," "," "," "," "," "," "," "," "];
 mongoose.connect(mongoDB, {useNewUrlParser:  true});
 
 mongoose.Promise = global.Promise;
@@ -46,9 +47,11 @@ app.use(function(req, res, next) {
    if (req.session && req.session.user) {
      UserModel.findOne({ email: req.session.user.email }, function(err, user) {
        if (user) {
+          
          req.user = user;
          delete req.user.password; // delete the password from the session
          req.session.user = user;  //refresh the session value
+         req.session.board= board;
          res.locals.user = user;
        }
        // finishing processing the middleware and run the route
@@ -75,6 +78,111 @@ function makeid() {
      next();
    }
  };
+
+ function checkRow(row, grid) {
+	if (grid[row] != " " && (grid[row] == grid[row+1] && grid[row] == grid[row+2])) {
+		return grid[row];
+	}
+	return "";
+}
+function checkCol(row, grid) {
+	if (grid[row] != " " && (grid[row] == grid[row+3] && grid[row] == grid[row+6])) {
+		return grid[row];
+	}
+	return "";
+}
+function checkDiag(grid) {
+	if (grid[0] != " " && (grid[0] == grid[4] && grid[4] == grid[8])) {
+		return grid[0];
+	}
+	if (grid[2] != " " && (grid[2] == grid[4] && grid[4] == grid[6])) {
+		return grid[2];
+	}
+	return "";
+}
+
+function checkWinner(grid) {
+	let winner = "";
+
+	// check the rows
+	if ((winner = checkRow(0, grid)) != "")
+		{return winner;}
+	if ((winner = checkRow(3, grid)) != "")
+		{return winner;}
+	if ((winner = checkRow(6, grid)) != "")
+		{return winner;}
+
+	// check the cols
+	if ((winner = checkCol(0, grid)) != "")
+		{return winner;}
+	if ((winner = checkCol(1, grid)) != "")
+		{return winner;}
+	if ((winner = checkCol(2, grid)) != "")
+		{return winner;}
+
+	if ((winner = checkDiag(grid)) != "")
+		{return winner; }
+
+
+	let isTie = true;
+	// check for tie
+	for (let i = 0; i < 9; i++){
+		if (grid[i] === " ") {
+			isTie = false;
+		}
+	}
+	if (isTie == true) {
+		return " ";
+	}
+
+	return winner;
+}
+
+function makeMove(grid) {
+	for (let x = 0; x < 9; x++) {
+		if (grid[x] == " ") {
+			grid[x] = "O";
+			return grid;
+		}
+	}
+}
+
+app.post('/ttt/play', (req, res) => {
+   console.log('/TTT/PLAY');
+   if(req.body.move == null)  //Making a request with { move:null } should return the current grid without making a move.
+   {
+      res.json({grid: req.session.board, winner: ""});
+   }
+   let move=parseInt(req.body.move);
+   let g = req.session.board;
+
+   if(g[move]===" ")
+   {
+      g[move]="X";
+   }
+   else{
+      res.json({status: 'Error', message: 'User Clicking an Occupied space on grid'});
+   }
+   
+	let w = checkWinner(g);
+
+	if (w != "") {
+		// winner exists, dont do anything
+	}
+	else {
+		// no winner, make a move
+      g = makeMove(g);
+      w= checkWinner(g);
+   }
+   if(w != "") //either there has been a tie or a winner
+   {
+      req.session.board= board;   //setting the session grid to be an empty grid
+   }
+
+	res.send({grid: req.body.grid, winner:w});
+});
+
+
 app.get('/', function(req, res){
    // res.send("Hello World!");
    res.sendFile(path.join(__dirname + '/public/index.html'));
@@ -91,6 +199,13 @@ app.get('/logout', function(req, res) {
       res.redirect('/');
    // }
    // res.json({status:'ERROR', message: "user didn't logged in(session was not found)" })
+   
+ });
+ app.post('/logout', function(req, res) {
+  
+      req.session.reset();   
+      res.json({status:'OK', message: "logged out perfectly" });
+      res.redirect('/');
    
  });
 app.get('/dashboard', requireLogin, function(req, res) {
@@ -202,6 +317,7 @@ app.post('/login',(req,res)=>{
          if(req.body.password === user.password)
          {
             req.session.user = user;
+            req.session.board= board;
             res.json({status:'OK', message: "Logged in using correct password and session created" }).send("user Logged in");
          }
          else
