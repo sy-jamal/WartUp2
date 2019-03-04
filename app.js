@@ -149,14 +149,11 @@ function makeMove(grid) {
 
 app.post('/ttt/play', (req, res) => {
    console.log('/TTT/PLAY');
-   if(req.body.move == "null")  //Making a request with { move:null } should return the current grid without making a move.
+   if(req.body.move == "null" || req.body.move == null || req.body.move == ""  )  //Making a request with { move:null } should return the current grid without making a move.
    {
       res.json({grid: req.session.board, winner: ""});
    }
-   if(req.body.move == null)  //Making a request with { move:null } should return the current grid without making a move.
-   {
-      res.json({grid: req.session.board, winner: ""});
-   }
+   
 
    let move=parseInt(req.body.move);
    let g = req.session.board;
