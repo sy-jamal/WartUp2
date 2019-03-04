@@ -280,6 +280,7 @@ app.post('/ttt/play', (req, res) => {
                console.log("resetting board");
                req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
                console.log(req.session.board);
+               console.log(g)
                return res.send({status: "OK", grid: g, winner:w});     
             })
             .catch(err=>{
