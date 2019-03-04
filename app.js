@@ -254,7 +254,7 @@ app.post('/ttt/play', (req, res) => {
    }
    if(w != "") //either there has been a tie or a winner
    {
-      var game_finalize= {grid: req.session.board, winner: w};
+      // var game_finalize= {grid: req.session.board, winner: w};
       UserModel.findOne({ email: req.session.user.email })
                .then(doc=>{
                   console.log("writing game update to db");
@@ -271,7 +271,8 @@ app.post('/ttt/play', (req, res) => {
                   {
                      doc.tie= doc.tie+1;
                   }
-                  doc.gameList.push(game_finalize);
+                  console.log(req.session.board)
+                  doc.gameList.push({grid: req.session.board, winner: w});
                   console.log(doc.gameList);
                   doc.save()
                   .then(msg=>{
