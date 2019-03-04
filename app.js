@@ -265,7 +265,7 @@ app.post('/ttt/play', (req, res) => {
             doc.totalGames= doc.totalGames+1;
             if(w ==='X')
             {
-               doc.human= human+1;
+               doc.human= doc.human+1;
             }
             else if(w==='O')
             {
@@ -291,12 +291,12 @@ app.post('/ttt/play', (req, res) => {
       console.log(req.session.board);
    }
    console.log("sending from end");
-   if(w==="")
+   if(w!="")
    {
-      return res.send({grid: g});
+      return res.send({grid: g, winner:w});      
    }
    else{
-      return res.send({grid: g, winner:w});
+      return res.send({grid: g}); 
    }
 	
 });
