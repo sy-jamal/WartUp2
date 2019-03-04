@@ -87,14 +87,14 @@ app.get('/logout', function(req, res) {
    if(req.session)
    {
       req.session.reset();   
-      res.json({status:'OK' });
+      res.json({status:'OK', message: "logged out perfectly" });
       res.redirect('/');
    }
-   res.json({status:'ERROR' })
+   res.json({status:'ERROR', message: "user didn't logged in(session was not found)" })
    
  });
 app.get('/dashboard', requireLogin, function(req, res) {
-   res.json({status:'OK' });
+   res.json({status:'OK' , message: "logged in" });
  });
 
 app.post('/adduser',(req, res)=>{
@@ -123,24 +123,24 @@ app.post('/adduser',(req, res)=>{
               email: req.body.email
            })
            .then(response =>{
-           res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
+           res.json({status:'ERROR', message: "wrong email address" }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
 
          //   res.status("ERROR").sendFile(path.join(__dirname + '/public/html/emailError.html'));
             })
             .catch(err =>{
                console.log(err)
                // res.status("ERROR").send("something wrong");
-               res.json({status:'ERROR'}).send("something went wrong while sending email")
+               res.json({status:'ERROR', message: "something went wrong while sending email"}).send("something went wrong while sending email")
             })
          } else {
            console.log('Email sent: ' + info.response);
-           res.json({status:'OK' }).sendFile(path.join(__dirname + '/public/html/verify.html'));
+           res.json({status:'OK', message: "key has been sent to Email" }).sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
        });
    })
    .catch(err=>{
       console.error(err);
-      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
+      res.json({status:'ERROR', message: "Email/username already exists in database" }).sendFile(path.join(__dirname + '/public/html/errorFile.html'));
    })
 });
 
@@ -167,21 +167,21 @@ app.post('/verify', (req, res)=>{
          doc.verified= true;
          doc.save()
          .then(newDoc=>{                     
-               res.json({status:'OK' }).send("Verified");
+               res.json({status:'OK', message: "user information verified with key" }).send("Verified");
          }) 
          .catch(err =>
          {
-            res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+            res.json({status:'ERROR', message: "Verification error(saving in database error)" }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
          })
       }
       else
       {
-         res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+         res.json({status:'ERROR', message: "verification error" }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
       }
    })
    .catch(err =>{
       console.error(err)
-      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
+      res.json({status:'ERROR', message: "verification error (Email is not in database)" }).sendFile(path.join(__dirname + '/public/html/verificationError.html'));
    })      
 });
 
@@ -191,28 +191,28 @@ app.post('/login',(req,res)=>{
    .then(user=>{
       console.log(user);
       if(!user){
-         res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+         res.json({status:'ERROR', message: "Not a user while loging in" }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
       }
       else
       {
          if(!user.verified)
          {
-           res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/verify.html'));
+           res.json({status:'ERROR', message: "Account exist in database but not verified" }).sendFile(path.join(__dirname + '/public/html/verify.html'));
          }
          if(req.body.password === user.password)
          {
             req.session.user = user;
-            res.json({status:'OK' }).send("user Logged in");
+            res.json({status:'OK', message: "Logged in using correct password and session created" }).send("user Logged in");
          }
          else
          {
-            res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+            res.json({status:'ERROR', message: "Tried to login in using WRONG password" }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
          }
       }
    })
    .catch(err =>{
       console.error(err)
-      res.json({status:'ERROR' }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
+      res.json({status:'ERROR', message: "Error while accessing the User info from Database" }).sendFile(path.join(__dirname + '/public/html/invalidUser.html'));
    }) 
 });
 app.listen(8080, '192.168.122.14');
