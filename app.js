@@ -192,7 +192,7 @@ app.post('/ttt/play', (req, res) => {
    if(w != "") //either there has been a tie or a winner
    {
       console.log("resetting board");
-      req.session.board= board;   //setting the session grid to be an empty grid
+      req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
       console.log(req.session.board);
    }
    console.log("sending from end");
