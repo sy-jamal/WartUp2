@@ -155,6 +155,7 @@ app.post('/ttt/play', (req, res) => {
    }
    if(!req.body.move || req.body.move === null ||req.body.move === "null" ||  req.body.move === ""  )  //Making a request with { move:null } should return the current grid without making a move.
    {
+      console.log("inside null checking")
       res.send({grid: req.session.board, winner: ""});
    }
    console.log(req.body.move);
@@ -163,9 +164,11 @@ app.post('/ttt/play', (req, res) => {
     let move=req.body.move;
 
    let g = req.session.board;
+   console.log(g)
 
    if(g[move]===" ")
-   {      
+   { 
+      console.log("human move");     
       g[move]="X";
       req.session.board= g;
 
@@ -180,8 +183,10 @@ app.post('/ttt/play', (req, res) => {
 		// winner exists, dont do anything
 	}
 	else {
-		// no winner, make a move
+      // no winner, make a move
+      console.log("computer move")
       g = makeMove(g);
+      req.session.board= g;
       w= checkWinner(g);
    }
    if(w != "") //either there has been a tie or a winner
@@ -189,7 +194,7 @@ app.post('/ttt/play', (req, res) => {
       console.log("resetting board");
       req.session.board= board;   //setting the session grid to be an empty grid
    }
-
+   console.log("sending from end");
 	res.send({grid: req.body.grid, winner:w});
 });
 
