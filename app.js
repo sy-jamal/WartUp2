@@ -216,6 +216,7 @@ app.post('/ttt/play', (req, res) => {
        res.send({status:"ERROR", message: 'Not in session'});
        return;
    }
+   console.log("the value is '", req.body.move, "'");
    if( req.body.move == null ||  req.body.move === "" || req.body.move === "null" )  //Making a request with { move:null } should return the current grid without making a move.
    {
       console.log("inside null checking");
