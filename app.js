@@ -220,6 +220,7 @@ app.post('/ttt/play', (req, res) => {
    if( req.body.move == null ||  req.body.move === "" || req.body.move === "null" )  //Making a request with { move:null } should return the current grid without making a move.
    {
       console.log("inside null checking");
+      console.log("email", req.session.user.email, "'");
       UserModel.findOne({email: req.session.user.email})
       .then(usr=>{
          console.log("returning from null checking");
@@ -409,7 +410,8 @@ app.post('/adduser',(req, res)=>{
       password: req.body.password,
       email: req.body.email,
       verified: false,
-      key: secKey
+      key: secKey,
+      currentBoard=[" "," "," "," "," "," "," "," "," "]
    });
 
    newUser.save()
