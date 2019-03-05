@@ -236,14 +236,14 @@ app.post('/ttt/play', (req, res) => {
       console.log("human move");     
       g[move]="X";
       req.session.board= g;
-
    }
    else{
       res.send({status: "ERROR", message: 'User Clicking an Occupied space on grid'});
       return;
    }
    
-	let w = checkWinner(g);
+   var w = checkWinner(g);
+   console.log("w =[", w,"]");
 
 	if (w != "") {
       // winner exists, dont do anything
