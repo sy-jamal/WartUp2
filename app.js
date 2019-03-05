@@ -307,8 +307,8 @@ app.post('/ttt/play', (req, res) => {
             console.log(doc.gameList);
             doc.save()
             .then(msg=>{
-               console.log('store game to database');
-               console.log("resetting board");
+               console.log('store game to database-2');
+               console.log("resetting board -2");
                req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
                console.log(req.session.board);
                console.log(g)
