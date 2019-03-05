@@ -18,6 +18,7 @@ let UserSchema = new Schema({
     human: {type: Number, default: 0, required: true},
     wopr: {type: Number, default: 0, required: true},
     tie: {type: Number, default: 0, required: true},
+    currentBoard:[String],
     gameList: [GameSchema]
 });
 UserSchema.plugin(uniqueValidator);

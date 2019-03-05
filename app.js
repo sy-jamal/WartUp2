@@ -51,7 +51,6 @@ app.use(function(req, res, next) {
          req.user = user;
          delete req.user.password; // delete the password from the session
          req.session.user = user;  //refresh the session value
-         req.session.board= board;
          res.locals.user = user;
        }
        // finishing processing the middleware and run the route
@@ -212,7 +211,7 @@ app.post('/getscore',(req,res)=>{
 
 app.post('/ttt/play', (req, res) => {
    console.log('/TTT/PLAY');
-   if(!req.session.board)
+   if(!req.session.user)
    {
        res.send({status:"ERROR", message: 'Not in session'});
        return;
@@ -220,22 +219,38 @@ app.post('/ttt/play', (req, res) => {
    if( req.body.move == null ||  req.body.move === "" || req.body.move == "null" )  //Making a request with { move:null } should return the current grid without making a move.
    {
       console.log("inside null checking");
-      res.send({grid: req.session.board});
-      return ;
+      UserModel.findOne({email: req.session.user.email})
+      .then(usr=>{
+         res.send({status:"OK", grid: usr.currentBoard});
+         return ;
+      })
+      .catch(err=>{
+         res.send({status: "ERROR",message: "Problem accessing from database"});
+         return;
+      })
+      
    }
    console.log(req.body.move);
-
+   let g = [];
    // let move=parseInt(req.body.move);
-    let move=req.body.move;
+   UserModel.findOne({email: req.session.user.email})
+   .then(usr=>{
+      g= usr.currentBoard;
+      return ;
+   })
+   .catch(err=>{
+      res.send({status: "ERROR",message: "Problem accessing from database"});
+      return;
+   })
 
-   let g = req.session.board;
+   
+   UserModel.findOne()
    console.log(g)
 
    if(g[move]===" ")
-   { 
-      console.log("human move");     
+   {  
       g[move]="X";
-      req.session.board= g;
+      console.log("human move X");
    }
    else{
       res.send({status: "ERROR", message: 'User Clicking an Occupied space on grid'});
@@ -260,18 +275,17 @@ app.post('/ttt/play', (req, res) => {
             else{ 
                doc.tie++; 
             }
+            console.log("resetting currentBoard in db");
+            doc.currentBoard=[" "," "," "," "," "," "," "," "," "];
             console.log(g)
             doc.gameList.push({grid: g, winner: w});
             console.log(doc.gameList);
             doc.save()
             .then(msg=>{
                console.log('store game to database');
-               console.log("resetting board");
-               req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
-               console.log(req.session.board);
                console.log(g)
                 res.send({status: "OK", grid: g, winner:w});   
-                 return;
+               return;
             })
             .catch(err=>{
                console.log(err);
@@ -289,14 +303,13 @@ app.post('/ttt/play', (req, res) => {
       // no winner, make a move
       console.log("computer move")
       g = makeMove(g);
-      req.session.board= g;
       w= checkWinner(g);
    }
    if(w === "O" || w=== " ") //either there has been a tie or a winner
    {
       UserModel.findOne({ email: req.session.user.email })
          .then(doc=>{
-            console.log("writing game update to db     2");
+            console.log("writing game update to db");
             doc.totalGames= doc.totalGames+1;
             if(w ==='X'){
                doc.human++;
@@ -307,23 +320,22 @@ app.post('/ttt/play', (req, res) => {
             else{ 
                doc.tie++; 
             }
+            console.log("resetting currentBoard in db");
+            doc.currentBoard=[" "," "," "," "," "," "," "," "," "];
             console.log(g)
             doc.gameList.push({grid: g, winner: w});
             console.log(doc.gameList);
             doc.save()
             .then(msg=>{
-               console.log('store game to database-2');
-               console.log("resetting board -2");
-               req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
-               console.log(req.session.board);
+               console.log('store game to database');
                console.log(g)
-               res.send({status: "OK", grid: g, winner:w});  
-               return ;   
+                res.send({status: "OK", grid: g, winner:w});   
+               return;
             })
             .catch(err=>{
                console.log(err);
                res.send({status: "Error", message:'Could not save game after winner is found' });
-               return; 
+               return ;
             })
          })
          .catch(err=>{
@@ -332,8 +344,18 @@ app.post('/ttt/play', (req, res) => {
             return; 
          })
    }
-   else{
-      console.log("sending from end");   
+   else
+   {
+      UserModel.findOne({ email: req.session.user.email })
+         .then(doc=>{
+            doc.currentBoard= g;
+         })
+         .catch(err=>{
+            console.log(err);
+            res.send({status: "ERROR", message:'Trouble storing in database'});
+            return;
+         })
+      console.log("No winner foundsending from end"); 
       res.send({status: "OK", grid: g}); 
       return; 
    }	
@@ -491,7 +513,6 @@ app.post('/login',(req,res)=>{
          if(req.body.password === user.password)
          {
             req.session.user = user;
-            req.session.board= board;
             return res.json({status:"OK", message: "Logged in using correct password and session created" });
             // .send("user Logged in");
          }
