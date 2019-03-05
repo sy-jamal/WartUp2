@@ -146,6 +146,15 @@ function makeMove(grid) {
 	}
 }
 
+function makeMoveIndex(grid) {
+	for (let x = 0; x < 9; x++) {
+		if (grid[x] == " ") {
+         grid[x] = "O";
+			return x;
+		}
+	}
+}
+
 app.post('/listgames',(req,res)=>{
    if(!req.session.user)
    {
@@ -157,7 +166,7 @@ app.post('/listgames',(req,res)=>{
                var lst = user.gameList;
                for(let i =0; i< lst.length; i++)
                {
-                  var jsonStr= {id: i, start_date: lst[i].start_date};
+                  var jsonStr= {id: i+1, start_date: lst[i].start_date};
                   allGames.push(jsonStr);
                }
                return res.send({status:"OK",games: allGames});
@@ -176,9 +185,13 @@ app.post('/getgame',(req,res)=>{
    }
    UserModel.findOne({ email: req.session.user.email })
             .then(user=>{
-               var grd= user.gameList[req.body.id].grid;
-               var win= user.gameList[req.body.id].winner;
-               return res.send({status: "OK", grid: grd, winner:win});
+            	console.log("hello its me")
+               var grd= user.gameList[parseInt(req.body.id)-1].grid;
+            	console.log("hello its me")
+               var win= user.gameList[parseInt(req.body.id)-1].winner;
+            	console.log("hello its me")
+               
+               return res.send({status: "OK", grid: grd, winner:win,message:"am i heerehrehr e"});
 
             })
             .catch(err=>{
@@ -217,13 +230,15 @@ app.post('/ttt/play', (req, res) => {
        return;
    }
    console.log("the value is '", req.body.move, "'");
+
    if( req.body.move == null ||  req.body.move === "" || req.body.move === "null" )  //Making a request with { move:null } should return the current grid without making a move.
    {
-      console.log("inside null checking");
-      console.log("email", req.session.user.email, "'");
+      console.log("hellllo inside null checking");
+      console.log("hellooo email", req.session.user.email, "'");
+	//console.log("helooo ooo email", UserModel.findOne({email: req.session.user.email}));
       UserModel.findOne({email: req.session.user.email})
       .then(usr=>{
-         console.log("returning from null checking");
+         console.log("heloooo returning from null checking");
          res.send({status:"OK", grid: usr.currentBoard});
          return ;
       })
@@ -234,32 +249,56 @@ app.post('/ttt/play', (req, res) => {
       })
       
    }
+	else{
    console.log(req.body.move);
    move = req.body.move;
    let g = [];
+ 
+ 	
+ var promise1 = new Promise(function(resolve, reject) {
+  setTimeout(function() {
+  
+	//let g = UserModel.findOne({email: req.session.user.email})['currentBoard'];
    // let move=parseInt(req.body.move);
-   UserModel.findOne({email: req.session.user.email})
+   
+   //if (UserModel.findOne({email: req.session.user.email}).count() >0)
+   //{
+
+ 	UserModel.findOne({email: req.session.user.email})
    .then(usr=>{
       g= usr.currentBoard;
-      console.log("board from db");
+      console.log("hehehee board from db");
+      
+   console.log("promise before ");
+   console.log(g)
+   
+    resolve(g);
    })
    .catch(err=>{
       res.send({status: "ERROR",message: "Problem accessing from database"});
       return;
    })
-
+   }, 2000);
    
+});
+
+
+
+promise1.then(function(value) {
+   console.log("promise after");
    console.log(g)
 
-   if(g[move]===" ")
+
+   if(g[move]!=" ")
    {  
-      g[move]="X";
-      console.log("human move X");
-   }
-   else{
       res.send({status: "ERROR", message: 'User Clicking an Occupied space on grid'});
       return;
    }
+   else{
+      
+      g[move]="X";
+      console.log("human move X");
+   
    
    var w = checkWinner(g);
    console.log("w =[", w,"]");
@@ -306,10 +345,24 @@ app.post('/ttt/play', (req, res) => {
 	else{
       // no winner, make a move
       console.log("computer move")
-      g = makeMove(g);
+      //g = makeMove(g);
+      
+      var promise2 = new Promise(function(resolve, reject) {
+  setTimeout(function() {
+      g[makeMoveIndex(g)]= "O";
+      
       w= checkWinner(g);
-   }
-   if(w === "O" || w=== " ") //either there has been a tie or a winner
+
+    resolve('foo');
+  }, 300);
+});
+   
+
+
+promise2.then(function(value) {
+  console.log(value);
+  // expected output: "foo"
+   if(checkWinner(g) !="") //either there has been a tie or a winner
    {
       UserModel.findOne({ email: req.session.user.email })
          .then(doc=>{
@@ -333,7 +386,7 @@ app.post('/ttt/play', (req, res) => {
             .then(msg=>{
                console.log('store game to database');
                console.log(g)
-                res.send({status: "OK", grid: g, winner:w});   
+                res.send({status: "OK", grid: g, winner:w, message: "am i here winner?"});   
                return;
             })
             .catch(err=>{
@@ -352,17 +405,35 @@ app.post('/ttt/play', (req, res) => {
    {
       UserModel.findOne({ email: req.session.user.email })
          .then(doc=>{
-            doc.currentBoard= g;
+            doc.currentBoard = g;
+            doc.save()
+            .then(val=>{
+            	console.log("No winner foundsending from end"); 
+			      res.send({status: "OK", grid: g, message: "am i here?"}); 
+			      return; 
+            	})
+            .catch(err=>{
+            	console.log(err);
+            	res.send({status: "ERROR", message:'go to hell in database'});
+            })
+
+            
+
          })
          .catch(err=>{
             console.log(err);
             res.send({status: "ERROR", message:'Trouble storing in database'});
             return;
          })
-      console.log("No winner foundsending from end"); 
-      res.send({status: "OK", grid: g}); 
-      return; 
-   }	
+      
+   }
+
+});
+   }
+   }
+   
+	});	
+}
 });
 
 
