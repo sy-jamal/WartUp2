@@ -216,27 +216,30 @@ app.post('/ttt/play', (req, res) => {
        res.send({status:"ERROR", message: 'Not in session'});
        return;
    }
-   if( req.body.move == null ||  req.body.move === "" || req.body.move == "null" )  //Making a request with { move:null } should return the current grid without making a move.
+   if( req.body.move == null ||  req.body.move === "" || req.body.move === "null" )  //Making a request with { move:null } should return the current grid without making a move.
    {
       console.log("inside null checking");
       UserModel.findOne({email: req.session.user.email})
       .then(usr=>{
+         console.log("returning from null checking");
          res.send({status:"OK", grid: usr.currentBoard});
          return ;
       })
       .catch(err=>{
+         console.log("error returning null");
          res.send({status: "ERROR",message: "Problem accessing from database"});
          return;
       })
       
    }
    console.log(req.body.move);
+   move = req.body.move;
    let g = [];
    // let move=parseInt(req.body.move);
    UserModel.findOne({email: req.session.user.email})
    .then(usr=>{
       g= usr.currentBoard;
-      return ;
+      console.log("board from db");
    })
    .catch(err=>{
       res.send({status: "ERROR",message: "Problem accessing from database"});
@@ -244,7 +247,6 @@ app.post('/ttt/play', (req, res) => {
    })
 
    
-   UserModel.findOne()
    console.log(g)
 
    if(g[move]===" ")
