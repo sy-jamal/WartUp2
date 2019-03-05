@@ -267,7 +267,8 @@ app.post('/ttt/play', (req, res) => {
                req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
                console.log(req.session.board);
                console.log(g)
-               return res.send({status: "OK", grid: g, winner:w});     
+               return res.send({status: "OK", grid: g, winner:w});   
+                 
             })
             .catch(err=>{
                console.log(err);
@@ -359,12 +360,12 @@ app.get('/logout', function(req, res) {
  app.post('/logout', function(req, res) {
   
       req.session.reset();   
-      res.json({status:"OK", message: "logged out perfectly" });
-      res.redirect('/');
+      return res.json({status:"OK", message: "logged out perfectly" });
+      // res.redirect('/');
    
  });
 app.get('/dashboard', requireLogin, function(req, res) {
-   res.json({status:"OK" , message: "logged in" });
+   return res.json({status:"OK" , message: "logged in" });
  });
 
 app.post('/adduser',(req, res)=>{
@@ -393,7 +394,7 @@ app.post('/adduser',(req, res)=>{
               email: req.body.email
            })
            .then(response =>{
-           res.json({status:"ERROR", message: "wrong email address" }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
+           return res.json({status:"ERROR", message: "wrong email address" }).sendFile(path.join(__dirname + '/public/html/emailError.html'));
 
          //   res.status("ERROR").sendFile(path.join(__dirname + '/public/html/emailError.html'));
             })
