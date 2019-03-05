@@ -472,6 +472,7 @@ app.post('/verify', (req, res)=>{
       if(doc.key === req.body.key || req.body.key === "abracadabra")
       {
          doc.verified= true;
+         doc.currentBoard=[" "," "," "," "," "," "," "," "," "];
          doc.save()
          .then(newDoc=>{                     
                return res.json({status:"OK", message: "user information verified with key" });
