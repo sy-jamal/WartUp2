@@ -214,12 +214,14 @@ app.post('/ttt/play', (req, res) => {
    console.log('/TTT/PLAY');
    if(!req.session.board)
    {
-      return res.send({status:"ERROR", message: 'Not in session'});
+       res.send({status:"ERROR", message: 'Not in session'});
+       return;
    }
    if( req.body.move == null ||  req.body.move === "" || req.body.move == "null" )  //Making a request with { move:null } should return the current grid without making a move.
    {
       console.log("inside null checking");
-      return res.send({grid: req.session.board});
+      res.send({grid: req.session.board});
+      return ;
    }
    console.log(req.body.move);
 
@@ -237,7 +239,8 @@ app.post('/ttt/play', (req, res) => {
 
    }
    else{
-      return res.send({status: "ERROR", message: 'User Clicking an Occupied space on grid'});
+      res.send({status: "ERROR", message: 'User Clicking an Occupied space on grid'});
+      return;
    }
    
 	let w = checkWinner(g);
@@ -267,31 +270,33 @@ app.post('/ttt/play', (req, res) => {
                req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
                console.log(req.session.board);
                console.log(g)
-               return res.send({status: "OK", grid: g, winner:w});   
-                 
+                res.send({status: "OK", grid: g, winner:w});   
+                 return;
             })
             .catch(err=>{
                console.log(err);
-               return res.send({status: "Error", message:'Could not save game after winner is found' });
+               res.send({status: "Error", message:'Could not save game after winner is found' });
+               return ;
             })
          })
          .catch(err=>{
             console.log(err);
-            return res.send({status: "ERROR", message:'Trouble finding in database'});
+            res.send({status: "ERROR", message:'Trouble finding in database'});
+            return; 
          })
 	}
-	else {
+	else{
       // no winner, make a move
       console.log("computer move")
       g = makeMove(g);
       req.session.board= g;
       w= checkWinner(g);
    }
-   if(w != "") //either there has been a tie or a winner
+   if(w === "O" || w=== " ") //either there has been a tie or a winner
    {
       UserModel.findOne({ email: req.session.user.email })
          .then(doc=>{
-            console.log("writing game update to db");
+            console.log("writing game update to db     2");
             doc.totalGames= doc.totalGames+1;
             if(w ==='X'){
                doc.human++;
@@ -312,21 +317,25 @@ app.post('/ttt/play', (req, res) => {
                req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
                console.log(req.session.board);
                console.log(g)
-               return res.send({status: "OK", grid: g, winner:w});     
+               res.send({status: "OK", grid: g, winner:w});  
+               return ;   
             })
             .catch(err=>{
                console.log(err);
-               return res.send({status: "Error", message:'Could not save game after winner is found' });
+               res.send({status: "Error", message:'Could not save game after winner is found' });
+               return; 
             })
          })
          .catch(err=>{
             console.log(err);
-            return res.send({status: "ERROR", message:'Trouble finding in database'});
+            res.send({status: "ERROR", message:'Trouble finding in database'});
+            return; 
          })
    }
    else{
       console.log("sending from end");   
-      return res.send({status: "OK", grid: g}); 
+      res.send({status: "OK", grid: g}); 
+      return; 
    }	
 });
 
