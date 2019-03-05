@@ -410,8 +410,7 @@ app.post('/adduser',(req, res)=>{
       password: req.body.password,
       email: req.body.email,
       verified: false,
-      key: secKey,
-      currentBoard=[" "," "," "," "," "," "," "," "," "]
+      key: secKey
    });
 
    newUser.save()
