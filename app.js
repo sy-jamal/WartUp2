@@ -243,7 +243,41 @@ app.post('/ttt/play', (req, res) => {
 	let w = checkWinner(g);
 
 	if (w != "") {
-		// winner exists, dont do anything
+      // winner exists, dont do anything
+      UserModel.findOne({ email: req.session.user.email })
+         .then(doc=>{
+            console.log("writing game update to db");
+            doc.totalGames= doc.totalGames+1;
+            if(w ==='X'){
+               doc.human++;
+            }
+            else if(w==='O'){
+               doc.wopr++;
+            }
+            else{ 
+               doc.tie++; 
+            }
+            console.log(g)
+            doc.gameList.push({grid: g, winner: w});
+            console.log(doc.gameList);
+            doc.save()
+            .then(msg=>{
+               console.log('store game to database');
+               console.log("resetting board");
+               req.session.board= [" "," "," "," "," "," "," "," "," "];   //setting the session grid to be an empty grid
+               console.log(req.session.board);
+               console.log(g)
+               return res.send({status: "OK", grid: g, winner:w});     
+            })
+            .catch(err=>{
+               console.log(err);
+               return res.send({status: "Error", message:'Could not save game after winner is found' });
+            })
+         })
+         .catch(err=>{
+            console.log(err);
+            return res.send({status: "ERROR", message:'Trouble finding in database'});
+         })
 	}
 	else {
       // no winner, make a move
